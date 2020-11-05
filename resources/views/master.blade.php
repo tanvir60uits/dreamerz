@@ -29,7 +29,7 @@
 
     <!-- Bizwheel Stylesheet -->
     <link rel="stylesheet" href="{!! asset('public/assets') !!}/css/reset.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{!! asset('public/assets') !!}/style.css">
     <link rel="stylesheet" href="{!! asset('public/assets') !!}/css/responsive.css">
     
     <!--[if lt IE 9]>
