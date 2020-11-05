@@ -45,17 +45,24 @@ class FrontendController extends Controller
     }
 
     public function registration_submit(Request $request){
-        $response=Curl::to(config('apiurl.api_url').'registeration')
-            ->withData ($request->all())
-            ->post();
-        $response=json_decode($response);
-        if($response->message == 'error'){
-            Session::flash('error','Input Not valid');
-            return redirect()->back();
+        try{
+            $response=Curl::to(config('apiurl.api_url').'registeration')
+                ->withData ($request->all())
+                ->post();
 
-        }else{
-            Session::flash('success','Send code in your mail');
-            return redirect('email_verify_code_view');
+            $response=json_decode($response);
+
+            if($response->message == 'error'){
+                Session::flash('error','Input Not valid');
+                return redirect()->back();
+
+            }else{
+                Session::flash('success','Send code in your mail');
+                return redirect('email_verify_code_view');
+            }
+        }catch (\Exception $e){
+            Session::flash('error','Email Already Exist.');
+            return redirect()->back();
         }
 
     }
