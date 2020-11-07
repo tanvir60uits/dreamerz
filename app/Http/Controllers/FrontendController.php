@@ -21,7 +21,6 @@ class FrontendController extends Controller
 
 
         $helper = $fb->getRedirectLoginHelper();
-		$_SESSION['FBRLH_state']=$_GET['state'];
 
 		dd($helper);
         $permissions = ['email']; // Optional permissions
