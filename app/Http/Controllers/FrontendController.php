@@ -17,9 +17,7 @@ class FrontendController extends Controller
             'app_secret' => 'd2ae81bbb5aa2cbb4f388e9c038ac351',
             'default_graph_version' => 'v2.10',
         ]);
-		$state = $this->pseudoRandomStringGenerator->getPseudoRandomString(static::CSRF_LENGTH);
-    $this->persistentDataHandler->set('state', $state);
-    Session::put('state', $state);
+
 
         $helper = $fb->getRedirectLoginHelper();
 		dd($helper);
