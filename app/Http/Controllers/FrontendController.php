@@ -11,16 +11,16 @@ use Ixudra\Curl\Facades\Curl;
 class FrontendController extends Controller
 {
     public function login(){
-		session_start();
+        session_start();
         $fb = new \Facebook\Facebook([
             'app_id' => '397450144773664',
             'app_secret' => 'd2ae81bbb5aa2cbb4f388e9c038ac351',
             'default_graph_version' => 'v2.10',
-			'persistent_data_handler' => 'session'
         ]);
 
 
         $helper = $fb->getRedirectLoginHelper();
+
         $permissions = ['email']; // Optional permissions
         $loginUrl = $helper->getLoginUrl(url('fb_callback'), $permissions);
 
@@ -38,16 +38,16 @@ class FrontendController extends Controller
         $response=Curl::to(config('apiurl.api_url').'login')
             ->withData ($data_array)
             ->post();
-         $response=json_decode($response);
+        $response=json_decode($response);
 
-         if($response->message == 'error'){
-             Session::flash('error','Invalid Credential');
-             return redirect()->back();
-         }else{
-             Session::put('users',$response->users);
-             Session::put('token',$token);
-             return redirect('/');
-         }
+        if($response->message == 'error'){
+            Session::flash('error','Invalid Credential');
+            return redirect()->back();
+        }else{
+            Session::put('users',$response->users);
+            Session::put('token',$token);
+            return redirect('/');
+        }
 
     }
 
@@ -118,20 +118,20 @@ class FrontendController extends Controller
 
     }
 
-  public function email_check(Request $request){
+    public function email_check(Request $request){
 
         $response=Curl::to(config('apiurl.api_url').'email_check')
             ->withData ($request->all())
             ->post();
-      $response=json_decode($response);
-      if($response->message == 'error'){
-          Session::flash('error','Email Not valid');
-          return redirect()->back();
+        $response=json_decode($response);
+        if($response->message == 'error'){
+            Session::flash('error','Email Not valid');
+            return redirect()->back();
 
-      }else{
-          Session::put('users',$response->users);
-          return redirect('password_verify');
-      }
+        }else{
+            Session::put('users',$response->users);
+            return redirect('password_verify');
+        }
 
     }
 
@@ -143,41 +143,41 @@ class FrontendController extends Controller
 
     }
 
-  public function password_verify_code(Request $request){
-      $response=Curl::to(config('apiurl.api_url').'password_verify_code')
-          ->withData ($request->all())
-          ->post();
-      $response=json_decode($response);
-      if($response->message == 'error'){
-          Session::flash('error','Code Not valid');
-          return redirect()->back();
+    public function password_verify_code(Request $request){
+        $response=Curl::to(config('apiurl.api_url').'password_verify_code')
+            ->withData ($request->all())
+            ->post();
+        $response=json_decode($response);
+        if($response->message == 'error'){
+            Session::flash('error','Code Not valid');
+            return redirect()->back();
 
-      }else{
-          Session::put('users',$response->users);
-          return redirect('change_password_view');
-      }
-
-    }
-
-  public function change_password_view(){
-
-      return view('change_password');
+        }else{
+            Session::put('users',$response->users);
+            return redirect('change_password_view');
+        }
 
     }
 
-  public function change_password(Request $request){
+    public function change_password_view(){
 
-      $response=Curl::to(config('apiurl.api_url').'change_password')
-          ->withData ($request->all())
-          ->post();
-      $response=json_decode($response);
-      if($response->message == 'error'){
-          return redirect()->back();
+        return view('change_password');
 
-      }else{
-          Session::flash('success','Password Successfully Changed');
-          return redirect('/');
-      }
+    }
+
+    public function change_password(Request $request){
+
+        $response=Curl::to(config('apiurl.api_url').'change_password')
+            ->withData ($request->all())
+            ->post();
+        $response=json_decode($response);
+        if($response->message == 'error'){
+            return redirect()->back();
+
+        }else{
+            Session::flash('success','Password Successfully Changed');
+            return redirect('/');
+        }
     }
 
 
@@ -204,7 +204,7 @@ class FrontendController extends Controller
 
         try {
             $accessToken = $helper->getAccessToken();
-            dd($accessToken);
+
         } catch(\Facebook\Exception\ResponseException $e) {
             // When Graph returns an error
             echo 'Graph returned an error: ' . $e->getMessage();
@@ -230,16 +230,16 @@ class FrontendController extends Controller
         }
 
 // Logged in
-        echo '<h3>Access Token</h3>';
-        var_dump($accessToken->getValue());
+//        echo '<h3>Access Token</h3>';
+//        var_dump($accessToken->getValue());
 
 // The OAuth 2.0 client handler helps us manage access tokens
         $oAuth2Client = $fb->getOAuth2Client();
 
 // Get the access token metadata from /debug_token
         $tokenMetadata = $oAuth2Client->debugToken($accessToken);
-        echo '<h3>Metadata</h3>';
-        var_dump($tokenMetadata);
+//        echo '<h3>Metadata</h3>';
+//        var_dump($tokenMetadata);
 
 // Validation (these will throw FacebookSDKException's when they fail)
         $tokenMetadata->validateAppId('397450144773664');
@@ -247,21 +247,64 @@ class FrontendController extends Controller
 //$tokenMetadata->validateUserId('123');
         $tokenMetadata->validateExpiration();
 
+
+
         if (! $accessToken->isLongLived()) {
             // Exchanges a short-lived access token for a long-lived one
             try {
                 $accessToken = $oAuth2Client->getLongLivedAccessToken($accessToken);
             } catch (Facebook\Exception\SDKException $e) {
-                echo "<p>Error getting long-lived access token: " . $e->getMessage() . "</p>\n\n";
-                exit;
+//                echo "<p>Error getting long-lived access token: " . $e->getMessage() . "</p>\n\n";
+//                exit;
             }
 
-            echo '<h3>Long-lived</h3>';
-            var_dump($accessToken->getValue());
+
+
+
+//            echo '<h3>Long-lived</h3>';
+//            var_dump($accessToken->getValue());
         }
+        try {
+            // Get the \Facebook\GraphNodes\GraphUser object for the current user.
+            // If you provided a 'default_access_token', the '{access-token}' is optional.
+            $response = $fb->get('/me', $accessToken->getValue());
+        } catch(\Facebook\Exceptions\FacebookResponseException $e) {
+            // When Graph returns an error
+//            echo 'Graph returned an error: ' . $e->getMessage();
+//            exit;
+        } catch(\Facebook\Exceptions\FacebookSDKException $e) {
+            // When validation fails or other local issues
+//            echo 'Facebook SDK returned an error: ' . $e->getMessage();
+//            exit;
+        }
+
+        $me = $response->getGraphUser();
+        $token = openssl_random_pseudo_bytes(16);
+        $token = bin2hex($token);
+        $users_data=[
+            '_token'=>Session::token(),
+            'name'=>$me->getName(),
+            'email'=>!empty($me->getEmail())?$me->getEmail():'c@mail.com' ,
+            'password'=>123456,
+            'type'=>'facebook',
+            'token'=>$token
+        ];
+
+        $response = Http::asForm()->post(config('apiurl.api_url').'registeration', $users_data);
+
+        $response->serverError();
+
+        $response=json_decode($response);
+
+        Session::put('users',$response->users);
+        Session::put('token',$token);
+        return redirect('/');
 
 
     }
+
+
+
 
 
 }

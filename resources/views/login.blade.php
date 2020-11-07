@@ -5,11 +5,12 @@
 
 
 @if(\Illuminate\Support\Facades\Session::get('token')!=null && \Illuminate\Support\Facades\Session::get('users')!=null)
-@if(\Illuminate\Support\Facades\Session::get('token') == \Illuminate\Support\Facades\Session::get('users')->remember_token)
-<h4>Mr {!! \Illuminate\Support\Facades\Session::get('users')!=null ? \Illuminate\Support\Facades\Session::get('users')->name: null !!} Successfully Login.</h4>
-<br> <a href="{!! url('logout') !!}">Logout</a><br>
-
-@endif
+	@if(\Illuminate\Support\Facades\Session::get('token') == \Illuminate\Support\Facades\Session::get('users')->remember_token)
+	<div class="card-header"><h3 class="text-center font-weight-light my-4">Mr/Ms {!! \Illuminate\Support\Facades\Session::get('users')!=null ? \Illuminate\Support\Facades\Session::get('users')->name: null !!} Successfully Login.</h3></div>
+	<div class="card-body text-center">
+	<a href="{!! url('logout') !!}">Logout</a>
+	</div>
+	@endif
 @else
 <div class="card-header"><h3 class="text-center font-weight-light my-4">Login</h3></div>
 <div class="card-body">
@@ -31,7 +32,6 @@
             <a href="{!! url('email_check_view') !!}">Forget Password?</a><br>
             <a href="{!! url('registration') !!}">Not Registered?</a><br>
             <a href="{!! $loginUrl !!}"> Login With Facebook</a>
-            <div class="fb-login-button" data-size="small" data-button-type="login_with" data-layout="rounded" data-auto-logout-link="false" data-use-continue-as="false" data-width=""></div>
         </div>
     </form>
 </div>
