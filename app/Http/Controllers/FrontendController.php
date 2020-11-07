@@ -21,7 +21,7 @@ class FrontendController extends Controller
 
         $helper = $fb->getRedirectLoginHelper();
 
-        $permissions = ['farhanmonsi@gmail.com']; // Optional permissions
+        $permissions = []; // Optional permissions
         $loginUrl = $helper->getLoginUrl(url('fb_callback'), $permissions);
 
         return view('login',compact('loginUrl'));
@@ -189,11 +189,14 @@ class FrontendController extends Controller
     }
 
     public function fb_callback(Request $request){
-
+        if(!session_id()) {
+            session_start();
+        }
         $fb = new \Facebook\Facebook([
             'app_id' => '397450144773664',
             'app_secret' => 'd2ae81bbb5aa2cbb4f388e9c038ac351',
             'default_graph_version' => 'v2.10',
+            'persistent_data_handler' => 'session'
             //'default_access_token' => '{access-token}', // optional
         ]);
 
@@ -201,7 +204,7 @@ class FrontendController extends Controller
 
         try {
             $accessToken = $helper->getAccessToken();
-
+            dd($accessToken);
         } catch(\Facebook\Exception\ResponseException $e) {
             // When Graph returns an error
             echo 'Graph returned an error: ' . $e->getMessage();
