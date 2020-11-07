@@ -17,7 +17,7 @@ class FrontendController extends Controller
             'app_secret' => 'd2ae81bbb5aa2cbb4f388e9c038ac351',
             'default_graph_version' => 'v2.10',
         ]);
-
+		$_SESSION['FBRLH_' . 'state'];
 
         $helper = $fb->getRedirectLoginHelper();
 		dd($helper);
