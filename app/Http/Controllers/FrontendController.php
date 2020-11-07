@@ -11,7 +11,7 @@ use Ixudra\Curl\Facades\Curl;
 class FrontendController extends Controller
 {
     public function login(){
-
+		session_start();
         $fb = new \Facebook\Facebook([
             'app_id' => '397450144773664',
             'app_secret' => 'd2ae81bbb5aa2cbb4f388e9c038ac351',
