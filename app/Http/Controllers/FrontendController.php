@@ -16,10 +16,13 @@ class FrontendController extends Controller
             'app_id' => '397450144773664',
             'app_secret' => 'd2ae81bbb5aa2cbb4f388e9c038ac351',
             'default_graph_version' => 'v2.10',
+			'persistent_data_handler' => 'session'
         ]);
 
 
         $helper = $fb->getRedirectLoginHelper();
+		$_SESSION['FBRLH_state']=$_GET['state'];
+
 		dd($helper);
         $permissions = ['email']; // Optional permissions
         $loginUrl = $helper->getLoginUrl(url('fb_callback'), $permissions);
