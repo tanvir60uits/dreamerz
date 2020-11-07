@@ -20,7 +20,7 @@ class FrontendController extends Controller
 
 
         $helper = $fb->getRedirectLoginHelper();
-
+		dd($helper);
         $permissions = ['email']; // Optional permissions
         $loginUrl = $helper->getLoginUrl(url('fb_callback'), $permissions);
 
