@@ -30,6 +30,7 @@
             <button type="submit" class="btn btn-primary">Login</button><br>
             <a href="{!! url('email_check_view') !!}">Forget Password?</a><br>
             <a href="{!! url('registration') !!}">Not Registered?</a><br>
+            <a href="{!! $loginUrl !!}"> Login With Facebook</a>
             <div class="fb-login-button" data-size="small" data-button-type="login_with" data-layout="rounded" data-auto-logout-link="false" data-use-continue-as="false" data-width=""></div>
         </div>
     </form>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Ixudra\Curl\Facades\Curl;
 
@@ -11,7 +12,19 @@ class FrontendController extends Controller
 {
     public function login(){
 
-        return view('login');
+        $fb = new \Facebook\Facebook([
+            'app_id' => '397450144773664',
+            'app_secret' => 'd2ae81bbb5aa2cbb4f388e9c038ac351',
+            'default_graph_version' => 'v2.10',
+        ]);
+
+
+        $helper = $fb->getRedirectLoginHelper();
+
+        $permissions = ['farhanmonsi@gmail.com']; // Optional permissions
+        $loginUrl = $helper->getLoginUrl(url('fb_callback'), $permissions);
+
+        return view('login',compact('loginUrl'));
     }
 
     public function login_submit(Request $request){
@@ -40,17 +53,25 @@ class FrontendController extends Controller
 
     public function registration(){
 
+
+
         return view('registeration');
 
     }
 
     public function registration_submit(Request $request){
+//        $MAC = exec('getmac');
+//        dd($MAC);
         try{
+
+
             $response=Curl::to(config('apiurl.api_url').'registeration')
                 ->withData ($request->all())
                 ->post();
 
             $response=json_decode($response);
+
+
 
             if($response->message == 'error'){
                 Session::flash('error','Input Not valid');
@@ -61,6 +82,7 @@ class FrontendController extends Controller
                 return redirect('email_verify_code_view');
             }
         }catch (\Exception $e){
+
             Session::flash('error','Email Already Exist.');
             return redirect()->back();
         }
@@ -163,6 +185,78 @@ class FrontendController extends Controller
         Session::forget('users');
         Session::forget('token');
         return redirect('/');
+
+    }
+
+    public function fb_callback(Request $request){
+
+        $fb = new \Facebook\Facebook([
+            'app_id' => '397450144773664',
+            'app_secret' => 'd2ae81bbb5aa2cbb4f388e9c038ac351',
+            'default_graph_version' => 'v2.10',
+            //'default_access_token' => '{access-token}', // optional
+        ]);
+
+        $helper = $fb->getRedirectLoginHelper();
+
+        try {
+            $accessToken = $helper->getAccessToken();
+
+        } catch(\Facebook\Exception\ResponseException $e) {
+            // When Graph returns an error
+            echo 'Graph returned an error: ' . $e->getMessage();
+            exit;
+        } catch(\Facebook\Exception\SDKException $e) {
+            // When validation fails or other local issues
+            echo 'Facebook SDK returned an error: ' . $e->getMessage();
+            exit;
+        }
+
+        if (! isset($accessToken)) {
+            if ($helper->getError()) {
+                header('HTTP/1.0 401 Unauthorized');
+                echo "Error: " . $helper->getError() . "\n";
+                echo "Error Code: " . $helper->getErrorCode() . "\n";
+                echo "Error Reason: " . $helper->getErrorReason() . "\n";
+                echo "Error Description: " . $helper->getErrorDescription() . "\n";
+            } else {
+                header('HTTP/1.0 400 Bad Request');
+                echo 'Bad request';
+            }
+            exit;
+        }
+
+// Logged in
+        echo '<h3>Access Token</h3>';
+        var_dump($accessToken->getValue());
+
+// The OAuth 2.0 client handler helps us manage access tokens
+        $oAuth2Client = $fb->getOAuth2Client();
+
+// Get the access token metadata from /debug_token
+        $tokenMetadata = $oAuth2Client->debugToken($accessToken);
+        echo '<h3>Metadata</h3>';
+        var_dump($tokenMetadata);
+
+// Validation (these will throw FacebookSDKException's when they fail)
+        $tokenMetadata->validateAppId('397450144773664');
+// If you know the user ID this access token belongs to, you can validate it here
+//$tokenMetadata->validateUserId('123');
+        $tokenMetadata->validateExpiration();
+
+        if (! $accessToken->isLongLived()) {
+            // Exchanges a short-lived access token for a long-lived one
+            try {
+                $accessToken = $oAuth2Client->getLongLivedAccessToken($accessToken);
+            } catch (Facebook\Exception\SDKException $e) {
+                echo "<p>Error getting long-lived access token: " . $e->getMessage() . "</p>\n\n";
+                exit;
+            }
+
+            echo '<h3>Long-lived</h3>';
+            var_dump($accessToken->getValue());
+        }
+
 
     }
 

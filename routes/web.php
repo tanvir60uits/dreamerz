@@ -26,3 +26,4 @@ Route::post('password_verify_code', [App\Http\Controllers\FrontendController::cl
 Route::get('change_password_view', [App\Http\Controllers\FrontendController::class,'change_password_view']);
 Route::post('change_password', [App\Http\Controllers\FrontendController::class,'change_password']);
 Route::get('logout', [App\Http\Controllers\FrontendController::class,'logout']);
+Route::get('fb_callback', [App\Http\Controllers\FrontendController::class,'fb_callback']);
